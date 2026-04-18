@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>介護単語練習 - 学習</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stars"></div>
+
+  <button class="nav-back" onclick="navigate('index.html')">◀ ホーム</button>
+
+  <p class="page-title">▶ 学　習</p>
+  <p class="page-subtitle">カテゴリーを選んでください</p>
+
+  <div class="category-list" id="category-list"></div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav__item" onclick="navigate('index.html')">ホーム</button>
+    <button class="bottom-nav__item active" onclick="playClick()">学習</button>
+    <button class="bottom-nav__item" onclick="navigate('manual.html')">マニュアル</button>
+  </nav>
+
+  <script src="data/vocabulary.js"></script>
+  <script src="app.js"></script>
+  <script>
+    initAudio();
+
+    function renderCategories() {
+      const list = document.getElementById('category-list');
+      list.innerHTML = '';
+
+      Object.entries(KATEGORI_INFO).forEach(([key, info]) => {
+        const prog = getKategoriProgress(key);
+        const total = info.total;
+        const pct = total > 0 ? Math.round(((prog.learningCount + prog.masteredCount) / total) * 100) : 0;
+        const due = getDueCards(key).length;
+
+        const el = document.createElement('div');
+        el.className = 'category-item';
+        el.innerHTML = `
+          <div class="category-item__name">${info.label}</div>
+          <div style="font-family:'Noto Sans JP','Yu Gothic',sans-serif;font-size:11px;color:var(--accent-cyan);margin-bottom:6px;letter-spacing:1px;">${info.labelJP}</div>
+          <div class="category-item__stats">
+            <span class="cat-stat--new">新：${prog.newCount}</span>
+            <span class="cat-stat--learn">学：${prog.learningCount}</span>
+            <span class="cat-stat--master">完：${prog.masteredCount}</span>
+            ${due > 0 ? `<span style="color:var(--accent-pink)">復習：${due}</span>` : ''}
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar" style="width:${pct}%"></div>
+          </div>
+        `;
+        el.addEventListener('click', () => {
+          playClick();
+          el.classList.add('active');
+          // Brief blink then navigate
+          setTimeout(() => {
+            startSession(key);
+            window.location.href = 'flashcard.html';
+          }, 350);
+        });
+        list.appendChild(el);
+      });
+    }
+
+    renderCategories();
+  </script>
+</body>
+</html>

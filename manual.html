@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Manual Book — 介護単語練習</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .manual-header {
+      text-align: center;
+      padding: 16px 12px 12px;
+      border-bottom: 2px solid var(--accent-yellow);
+      margin-bottom: 0;
+    }
+    .manual-header__title {
+      font-size: 10px;
+      color: var(--accent-yellow);
+      text-shadow: 0 0 8px var(--accent-yellow);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .manual-header__sub {
+      font-size: 6px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* Section */
+    .section {
+      margin: 12px 12px 0;
+      border: 2px solid var(--text-dim);
+      background: var(--bg-panel);
+    }
+    .section__head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--text-dim);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .section__head:active { opacity: 0.7; }
+    .section__num {
+      font-size: 8px;
+      color: var(--accent-yellow);
+      min-width: 18px;
+    }
+    .section__title {
+      font-size: 7px;
+      color: var(--text-white);
+      flex: 1;
+      letter-spacing: 1px;
+      line-height: 1.6;
+    }
+    .section__arrow {
+      font-size: 8px;
+      color: var(--text-dim);
+      transition: transform 0.2s;
+    }
+    .section__arrow.open { transform: rotate(90deg); }
+    .section__body {
+      padding: 12px;
+      display: none;
+    }
+    .section__body.open { display: block; }
+
+    /* Step list */
+    .step-list { list-style: none; padding: 0; margin: 0; }
+    .step-list li {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .step-list li:last-child { margin-bottom: 0; }
+    .step-num {
+      min-width: 22px; height: 22px;
+      background: var(--accent-yellow);
+      color: var(--bg-dark);
+      font-size: 7px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 7px;
+      color: var(--text-white);
+      line-height: 2;
+    }
+    .step-text b { color: var(--accent-cyan); }
+    .step-text em { color: var(--accent-yellow); font-style: normal; }
+
+    /* Card demo */
+    .demo-card {
+      border: 2px solid var(--accent-cyan);
+      background: var(--bg-card);
+      padding: 12px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .demo-card__kanji {
+      font-family: 'Noto Sans JP', 'Yu Gothic', sans-serif;
+      font-size: 36px;
+      color: var(--text-white);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .demo-card__yomi {
+      font-family: 'Noto Sans JP', 'Yu Gothic', sans-serif;
+      font-size: 13px;
+      color: var(--accent-pink);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .demo-card__arti {
+      font-size: 9px;
+      color: var(--accent-yellow);
+      display: block;
+    }
+
+    /* SRS table */
+    .srs-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    .srs-table th, .srs-table td {
+      padding: 7px 6px;
+      font-size: 6px;
+      border: 1px solid var(--text-dim);
+      text-align: center;
+      line-height: 1.8;
+    }
+    .srs-table th { color: var(--accent-yellow); background: var(--bg-dark); }
+    .srs-table td { color: var(--text-white); }
+    .srs-table .hard  { color: var(--accent-red); }
+    .srs-table .again { color: var(--accent-purple); }
+    .srs-table .good  { color: var(--accent-cyan); }
+    .srs-table .easy  { color: var(--accent-green); }
+
+    /* Tip box */
+    .tip {
+      border: 2px dashed var(--accent-cyan);
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 6px;
+      color: var(--text-dim);
+      line-height: 2;
+    }
+    .tip b { color: var(--accent-cyan); }
+
+    /* Goal timeline */
+    .timeline { margin: 4px 0; }
+    .timeline-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      min-width: 12px; height: 12px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 6px var(--accent-cyan);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .timeline-content {}
+    .timeline-content__period {
+      font-size: 6px;
+      color: var(--accent-yellow);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .timeline-content__text {
+      font-size: 6px;
+      color: var(--text-white);
+      line-height: 2;
+    }
+
+    /* Dash legend */
+    .dash-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+    }
+    .dash-row:last-child { border-bottom: none; }
+    .dash-row__label { font-size: 6px; color: var(--accent-cyan); }
+    .dash-row__desc  { font-size: 6px; color: var(--text-dim); text-align: right; max-width: 60%; line-height: 1.8; }
+
+    /* Warning box */
+    .warn {
+      border: 2px solid var(--accent-red);
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 6px;
+      color: var(--text-white);
+      line-height: 2;
+      background: rgba(255,49,49,0.08);
+    }
+    .warn b { color: var(--accent-red); }
+
+    .body-pad { padding-bottom: 80px; }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="body-pad">
+
+    <!-- HEADER -->
+    <header class="manual-header">
+      <p class="manual-header__title">▶ MANUAL BOOK</p>
+      <p class="manual-header__sub">介護単語練習 — Panduan Lengkap Penggunaan</p>
+    </header>
+
+    <!-- ===== 1. APA ITU APLIKASI INI ===== -->
+    <div class="section" id="s1">
+      <div class="section__head" onclick="toggle('s1')">
+        <span class="section__num">01</span>
+        <span class="section__title">Apa itu Aplikasi Ini?</span>
+        <span class="section__arrow" id="arr-s1">▶</span>
+      </div>
+      <div class="section__body" id="body-s1">
+        <ul class="step-list">
+          <li>
+            <span class="step-num">!</span>
+            <span class="step-text">
+              Aplikasi ini adalah <b>alat belajar kosakata bahasa Jepang bidang perawatan (介護)</b>
+              yang dirancang khusus untuk <em>jisshuusei (技能実習生)</em> yang baru masuk fasilitas perawatan di Jepang.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">!</span>
+            <span class="step-text">
+              Berisi <em>267 kosakata</em> resmi dari buku panduan 介護の日本語 yang diterbitkan oleh
+              Asosiasi Pekerja Sosial Jepang, dibagi menjadi <em>10 kategori</em> sesuai situasi kerja nyata.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">!</span>
+            <span class="step-text">
+              Sistem belajar menggunakan metode <b>SRS (Spaced Repetition System)</b> —
+              sama seperti aplikasi Anki yang digunakan jutaan pelajar bahasa di seluruh dunia.
+              Kata yang sulit muncul lebih sering, kata yang sudah hafal muncul lebih jarang.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== 2. CARA MEMULAI ===== -->
+    <div class="section" id="s2">
+      <div class="section__head" onclick="toggle('s2')">
+        <span class="section__num">02</span>
+        <span class="section__title">Cara Memulai Belajar</span>
+        <span class="section__arrow" id="arr-s2">▶</span>
+      </div>
+      <div class="section__body" id="body-s2">
+        <ul class="step-list">
+          <li>
+            <span class="step-num">1</span>
+            <span class="step-text">
+              Buka aplikasi → muncul layar <em>PRESS START</em>.
+              Ketuk layar untuk masuk dan memulai musik.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <span class="step-text">
+              Di halaman utama (Dashboard), ketuk tombol <em>「勉強する」</em> untuk mulai belajar.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <span class="step-text">
+              Pilih <b>kategori</b> yang ingin dipelajari. Disarankan mulai dari
+              <em>Bagian Luar Tubuh</em> atau <em>Makan &amp; Minum</em> karena paling sering dipakai di awal kerja.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <span class="step-text">
+              Sesi belajar dimulai. Setiap sesi berisi maksimal <em>10 kartu baru</em> ditambah
+              kartu yang jadwal ulangnya sudah tiba hari ini.
+            </span>
+          </li>
+        </ul>
+        <div class="tip">
+          <b>Tips:</b> Mulai dari kategori yang paling sering kamu dengar di tempat kerja.
+          Lebih mudah menghafal kata yang sudah pernah didengar langsung.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3. CARA MENGGUNAKAN FLASHCARD ===== -->
+    <div class="section" id="s3">
+      <div class="section__head" onclick="toggle('s3')">
+        <span class="section__num">03</span>
+        <span class="section__title">Cara Menggunakan Flashcard</span>
+        <span class="section__arrow" id="arr-s3">▶</span>
+      </div>
+      <div class="section__body" id="body-s3">
+
+        <div class="demo-card">
+          <span class="demo-card__kanji">入浴</span>
+          <span class="demo-card__yomi">にゅうよく</span>
+          <span class="demo-card__arti">mandi (berendam)</span>
+        </div>
+
+        <ul class="step-list" style="margin-top:12px;">
+          <li>
+            <span class="step-num">1</span>
+            <span class="step-text">
+              <b>Sisi depan kartu</b> menampilkan <em>kanji</em>.
+              Coba baca dan tebak artinya dulu sebelum melihat jawaban.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <span class="step-text">
+              Ketuk tombol <em>「よみかた」</em> untuk melihat cara baca dalam hiragana.
+              Tombol ini tidak mengeluarkan suara — hanya tampilan.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <span class="step-text">
+              Ketuk tombol <em>「▶ めくる」</em> untuk membalik kartu dan melihat <b>arti bahasa Indonesia</b>
+              beserta <b>contoh kalimat</b> di bagian bawah.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <span class="step-text">
+              Setelah melihat arti, <b>nilai kejujuran ingatanmu</b> dengan memilih salah satu dari 4 tombol di bawah:
+            </span>
+          </li>
+        </ul>
+
+        <table class="srs-table" style="margin-top:8px;">
+          <thead>
+            <tr>
+              <th>Tombol</th>
+              <th>Artinya</th>
+              <th>Kapan muncul lagi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="hard">難しい</td>
+              <td>Sama sekali tidak ingat</td>
+              <td>Hari ini juga</td>
+            </tr>
+            <tr>
+              <td class="again">少し忘れた</td>
+              <td>Samar-samar ingat</td>
+              <td>Beberapa hari lagi</td>
+            </tr>
+            <tr>
+              <td class="good">覚えた</td>
+              <td>Ingat dengan baik</td>
+              <td>Beberapa hari - minggu</td>
+            </tr>
+            <tr>
+              <td class="easy">とても簡単</td>
+              <td>Sangat mudah, sudah hafal</td>
+              <td>1 minggu atau lebih</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warn" style="margin-top:10px;">
+          <b>Penting:</b> Jangan tekan とても簡単 untuk semua kartu hanya agar cepat selesai.
+          Sistem ini bekerja berdasarkan kejujuran — semakin jujur kamu menilai, semakin efektif hafalanmu.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4. MEMBACA DASHBOARD ===== -->
+    <div class="section" id="s4">
+      <div class="section__head" onclick="toggle('s4')">
+        <span class="section__num">04</span>
+        <span class="section__title">Cara Membaca Dashboard</span>
+        <span class="section__arrow" id="arr-s4">▶</span>
+      </div>
+      <div class="section__body" id="body-s4">
+        <div class="dash-row">
+          <span class="dash-row__label">学習済み単語</span>
+          <span class="dash-row__desc">Jumlah kata yang sudah pernah kamu pelajari minimal 1 kali</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label">今日の復習</span>
+          <span class="dash-row__desc">Kata yang jadwal ulangnya sudah tiba hari ini — prioritaskan ini dulu</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label">連続学習日</span>
+          <span class="dash-row__desc">Berapa hari berturut-turut kamu belajar tanpa absen</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label">完璧に覚えた</span>
+          <span class="dash-row__desc">Kata dengan interval lebih dari 21 hari — dianggap sudah dikuasai</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label" style="color:var(--accent-cyan);">■ 学習中</span>
+          <span class="dash-row__desc">Sudah dilihat, masih dalam proses hafal</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label" style="color:var(--accent-green);">■ 完璧</span>
+          <span class="dash-row__desc">Interval lebih 21 hari — hampir tidak perlu diulang lagi</span>
+        </div>
+        <div class="dash-row">
+          <span class="dash-row__label" style="color:var(--text-dim);">■ 未学習</span>
+          <span class="dash-row__desc">Belum pernah dilihat sama sekali</span>
+        </div>
+        <div style="margin-top:10px;border-top:2px dashed rgba(255,255,255,0.1);padding-top:10px;">
+          <p style="font-size:6px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px;">STATUS DI KATEGORI</p>
+          <div class="dash-row">
+            <span class="dash-row__label" style="color:var(--accent-cyan);">新</span>
+            <span class="dash-row__desc">Kata baru — belum pernah dilihat</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-row__label" style="color:var(--accent-pink);">学</span>
+            <span class="dash-row__desc">Sedang dipelajari — sudah dilihat, belum dikuasai</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-row__label" style="color:var(--accent-green);">完</span>
+            <span class="dash-row__desc">Dikuasai — interval lebih dari 21 hari</span>
+          </div>
+          <div class="dash-row">
+            <span class="dash-row__label" style="color:var(--accent-yellow);">復習</span>
+            <span class="dash-row__desc">Perlu diulang hari ini</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 5. TIPS BELAJAR EFEKTIF ===== -->
+    <div class="section" id="s5">
+      <div class="section__head" onclick="toggle('s5')">
+        <span class="section__num">05</span>
+        <span class="section__title">Tips Belajar Efektif</span>
+        <span class="section__arrow" id="arr-s5">▶</span>
+      </div>
+      <div class="section__body" id="body-s5">
+        <ul class="step-list">
+          <li>
+            <span class="step-num">★</span>
+            <span class="step-text">
+              <b>Belajar sedikit tapi rutin</b> jauh lebih efektif daripada belajar banyak sekaligus lalu berhenti.
+              Target ideal: <em>15–20 menit setiap hari</em>.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">★</span>
+            <span class="step-text">
+              <b>Prioritaskan 今日の復習 (review hari ini)</b> sebelum belajar kata baru.
+              Kata yang sudah dipelajari tapi tidak diulang akan terlupakan.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">★</span>
+            <span class="step-text">
+              <b>Hubungkan kata dengan situasi nyata.</b> Saat melihat kanji, bayangkan situasi kerjanya —
+              misalnya 入浴 → bayangkan kamu sedang memandikan pengguna layanan.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">★</span>
+            <span class="step-text">
+              <b>Jangan lewati tombol よみかた.</b> Melatih membaca kanji secara aktif
+              jauh lebih efektif daripada langsung membalik kartu.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">★</span>
+            <span class="step-text">
+              <b>Jaga streak連続学習日.</b> Semakin panjang streak kamu, semakin banyak kata
+              yang bisa kamu pertahankan dalam memori jangka panjang.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== 6. TUJUAN JANGKA PANJANG ===== -->
+    <div class="section" id="s6">
+      <div class="section__head" onclick="toggle('s6')">
+        <span class="section__num">06</span>
+        <span class="section__title">Tujuan Jangka Panjang</span>
+        <span class="section__arrow" id="arr-s6">▶</span>
+      </div>
+      <div class="section__body" id="body-s6">
+        <div class="timeline">
+
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent-cyan);box-shadow:0 0 6px var(--accent-cyan);"></div>
+            <div class="timeline-content">
+              <span class="timeline-content__period">Minggu 1 — 2</span>
+              <span class="timeline-content__text">
+                Hafal <b>kosakata tubuh dan perawatan dasar</b> (体の外側, 食事介助, 排泄介助).
+                Bisa memahami instruksi sederhana dari senior di tempat kerja.
+              </span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent-yellow);box-shadow:0 0 6px var(--accent-yellow);"></div>
+            <div class="timeline-content">
+              <span class="timeline-content__period">Bulan 1</span>
+              <span class="timeline-content__text">
+                Hafal <b>100+ kosakata</b> dari semua kategori dasar.
+                Bisa berkomunikasi secara aktif dengan pengguna layanan untuk kebutuhan harian —
+                makan, toileting, berpakaian, dan mandi.
+              </span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent-pink);box-shadow:0 0 6px var(--accent-pink);"></div>
+            <div class="timeline-content">
+              <span class="timeline-content__period">Bulan 2 — 3</span>
+              <span class="timeline-content__text">
+                Hafal <b>200+ kosakata</b> termasuk kondisi tubuh, mobilisasi, dan kosakata pekerjaan.
+                Bisa memahami dan membuat laporan sederhana (申し送り).
+                Mulai memahami percakapan antar staf.
+              </span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent-green);box-shadow:0 0 6px var(--accent-green);"></div>
+            <div class="timeline-content">
+              <span class="timeline-content__period">Bulan 3 — 6</span>
+              <span class="timeline-content__text">
+                Hafal <b>semua 267 kosakata</b> dan bisa menggunakannya secara natural.
+                Tidak lagi bergantung pada kamus saat bekerja.
+                Kepercayaan diri dalam berkomunikasi dengan pengguna layanan meningkat signifikan.
+              </span>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent-purple);box-shadow:0 0 6px var(--accent-purple);"></div>
+            <div class="timeline-content">
+              <span class="timeline-content__period">Jangka Panjang</span>
+              <span class="timeline-content__text">
+                Fondasi kosakata ini menjadi modal utama untuk menghadapi
+                <b>ujian 介護技能評価試験</b> dan mempersiapkan diri menuju
+                <b>資格取得 (mendapatkan sertifikasi perawat)</b> di Jepang.
+                Jisshuusei yang menguasai bahasa lebih cepat mendapat kepercayaan dari fasilitas
+                dan membuka jalan karier yang lebih luas.
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 7. PERTANYAAN UMUM ===== -->
+    <div class="section" id="s7" style="margin-bottom:12px;">
+      <div class="section__head" onclick="toggle('s7')">
+        <span class="section__num">07</span>
+        <span class="section__title">Pertanyaan Umum (FAQ)</span>
+        <span class="section__arrow" id="arr-s7">▶</span>
+      </div>
+      <div class="section__body" id="body-s7">
+        <ul class="step-list">
+          <li>
+            <span class="step-num">Q</span>
+            <span class="step-text">
+              <b>Data belajar saya tersimpan di mana?</b><br>
+              Tersimpan di browser HP/komputer kamu (localStorage).
+              Jangan hapus data browser agar progress tidak hilang.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">Q</span>
+            <span class="step-text">
+              <b>Kalau ganti HP, apakah data hilang?</b><br>
+              Ya, data tidak otomatis berpindah ke HP baru karena disimpan lokal.
+              Gunakan HP yang sama selama proses belajar.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">Q</span>
+            <span class="step-text">
+              <b>Kata yang sudah とても簡単 apakah hilang?</b><br>
+              Tidak. Kata tetap ada dan akan muncul lagi setelah interval panjang
+              (7 hari → 21 hari → 63 hari → dst).
+            </span>
+          </li>
+          <li>
+            <span class="step-num">Q</span>
+            <span class="step-text">
+              <b>Berapa lama waktu belajar yang ideal per hari?</b><br>
+              Cukup <em>15–20 menit setiap hari</em>. Konsistensi lebih penting daripada durasi panjang.
+            </span>
+          </li>
+          <li>
+            <span class="step-num">Q</span>
+            <span class="step-text">
+              <b>Apakah ada suara pengucapan kata?</b><br>
+              Belum tersedia. Fokus aplikasi ini pada pengenalan kanji dan artinya.
+              Untuk pengucapan, gunakan referensi audio dari buku resmi 介護の日本語.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end body-pad -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav__item" onclick="navigate('index.html')">ホーム</button>
+    <button class="bottom-nav__item" onclick="navigate('study.html')">学習</button>
+    <button class="bottom-nav__item active" onclick="playClick()">マニュアル</button>
+  </nav>
+
+  <script src="data/vocabulary.js"></script>
+  <script src="app.js"></script>
+  <script>
+    initAudio();
+
+    function toggle(id) {
+      playClick();
+      const body = document.getElementById('body-' + id);
+      const arr  = document.getElementById('arr-' + id);
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      arr.classList.toggle('open', !isOpen);
+    }
+
+    // Buka section pertama otomatis
+    toggle('s1');
+  </script>
+</body>
+</html>
