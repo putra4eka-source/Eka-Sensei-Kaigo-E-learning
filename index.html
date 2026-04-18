@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>介護単語練習</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── PRESS START ── */
+    #press-start {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--bg-dark);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 24px; cursor: pointer;
+    }
+    #press-start img {
+      width: 280px; max-width: 85%;
+      image-rendering: pixelated;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    #press-start .ps-label {
+      font-size: 12px; color: var(--accent-yellow);
+      text-shadow: 0 0 10px var(--accent-yellow);
+      animation: blink 1s step-end infinite;
+      letter-spacing: 3px;
+    }
+    #press-start .ps-sub {
+      font-size: 6px; color: var(--text-dim); letter-spacing: 2px;
+      margin-top: -16px;
+    }
+
+    /* ── HEADER ── */
+    .home-header {
+      text-align: center;
+      padding: 16px 12px 8px;
+      border-bottom: 2px solid var(--accent-yellow);
+      box-shadow: 0 2px 12px rgba(245,166,35,0.2);
+      margin-bottom: 16px;
+    }
+    .home-header img {
+      width: 260px; max-width: 90%;
+      image-rendering: pixelated;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+
+    /* ── STAT GRID ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 0 12px 12px;
+    }
+    .stat-tile {
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-purple);
+      box-shadow: 0 0 6px rgba(155,89,182,0.4);
+      padding: 12px 8px 10px;
+      text-align: center;
+      border-radius: 2px;
+    }
+    .stat-tile__val {
+      display: block;
+      font-size: 22px;
+      color: var(--accent-yellow);
+      text-shadow: 0 0 10px var(--accent-yellow);
+      margin-bottom: 5px;
+      line-height: 1;
+    }
+    .stat-tile__lbl {
+      font-size: 5px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      line-height: 1.8;
+    }
+    /* Tile warna beda tiap kolom */
+    .stat-tile:nth-child(2) { border-color: var(--accent-cyan);   box-shadow: 0 0 6px rgba(0,212,255,0.3); }
+    .stat-tile:nth-child(2) .stat-tile__val { color: var(--accent-cyan); text-shadow: 0 0 10px var(--accent-cyan); }
+    .stat-tile:nth-child(3) { border-color: var(--accent-pink);   box-shadow: 0 0 6px rgba(255,110,199,0.3); }
+    .stat-tile:nth-child(3) .stat-tile__val { color: var(--accent-pink); text-shadow: 0 0 10px var(--accent-pink); }
+    .stat-tile:nth-child(4) { border-color: var(--accent-green);  box-shadow: 0 0 6px rgba(57,255,20,0.3); }
+    .stat-tile:nth-child(4) .stat-tile__val { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
+
+    /* ── OVERALL PROGRESS ── */
+    .overall-box {
+      margin: 0 12px 12px;
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(0,212,255,0.2);
+      padding: 12px;
+    }
+    .overall-box__header {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 6px;
+    }
+    .overall-box__title { font-size: 6px; color: var(--accent-cyan); letter-spacing: 1px; }
+    .overall-box__count { font-size: 7px; color: var(--accent-yellow); }
+    .legend-row {
+      display: flex; justify-content: space-between;
+      margin-top: 7px; padding-top: 6px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+    }
+    .legend-row span { font-size: 5px; letter-spacing: 0.5px; }
+
+    /* ── KATEGORI PROGRESS ── */
+    .cat-box {
+      margin: 0 12px 12px;
+      background: var(--bg-panel);
+      border: 2px solid var(--text-dim);
+      padding: 12px;
+    }
+    .cat-box__title {
+      font-size: 6px; color: var(--text-dim);
+      letter-spacing: 1px; margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed rgba(255,255,255,0.1);
+    }
+    .cat-row { margin-bottom: 9px; }
+    .cat-row:last-child { margin-bottom: 0; }
+    .cat-row__header {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 3px;
+    }
+    .cat-row__name { font-size: 5px; color: var(--text-white); letter-spacing: 0.5px; }
+    .cat-row__count { font-size: 5px; color: var(--text-dim); }
+    .cat-row__due { color: var(--accent-pink); margin-left: 4px; }
+
+    /* ── START BUTTON ── */
+    .start-wrap {
+      margin: 0 12px 12px;
+    }
+    .btn--start {
+      position: relative;
+      font-size: 12px;
+      letter-spacing: 4px;
+      padding: 16px 12px;
+      margin: 0;
+      width: 100%;
+      background: var(--accent-yellow);
+      color: var(--bg-dark);
+      border: 3px solid var(--accent-yellow);
+      box-shadow: 4px 4px 0 #7a5200, 0 0 20px rgba(245,166,35,0.5);
+      animation: btn-pulse 1.2s step-end infinite;
+    }
+    .btn--start:active {
+      box-shadow: 1px 1px 0 #7a5200;
+      transform: translate(3px, 3px);
+    }
+    @keyframes btn-pulse {
+      0%, 100% { box-shadow: 4px 4px 0 #7a5200, 0 0 20px rgba(245,166,35,0.6); }
+      50%       { box-shadow: 4px 4px 0 #7a5200, 0 0 6px rgba(245,166,35,0.1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <!-- PRESS START OVERLAY -->
+  <div id="press-start">
+    <img src="UBAPoDAJ5D.jpg" alt="介護単語練習">
+    <div class="ps-label">PRESS  START</div>
+    <div class="ps-sub">タップして始める</div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="home-header">
+    <img src="UBAPoDAJ5D.jpg" alt="介護単語練習 by Eka Sensei">
+  </header>
+
+  <!-- STAT TILES -->
+  <div class="stat-grid">
+    <div class="stat-tile">
+      <span class="stat-tile__val" id="stat-learned">0</span>
+      <span class="stat-tile__lbl">学習済み単語</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__val" id="stat-due">0</span>
+      <span class="stat-tile__lbl">今日の復習</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__val" id="stat-streak">0</span>
+      <span class="stat-tile__lbl">連続学習日</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__val" id="stat-mastered">0</span>
+      <span class="stat-tile__lbl">完璧に覚えた</span>
+    </div>
+  </div>
+
+  <!-- OVERALL PROGRESS -->
+  <div class="overall-box">
+    <div class="overall-box__header">
+      <span class="overall-box__title">▶ 全体進捗</span>
+      <span class="overall-box__count"><span id="progress-text">0</span> / 267</span>
+    </div>
+    <div class="progress-wrap" style="height:10px;">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div class="legend-row">
+      <span style="color:var(--accent-cyan);">■ 学習中 <span id="legend-learning">0</span></span>
+      <span style="color:var(--accent-green);">■ 完璧 <span id="legend-mastered">0</span></span>
+      <span style="color:var(--text-dim);">■ 未学習 <span id="legend-new">0</span></span>
+    </div>
+  </div>
+
+  <!-- START BUTTON -->
+  <div class="start-wrap">
+    <button class="btn btn--start" onclick="goStudy()">勉　強　す　る</button>
+  </div>
+
+  <!-- KATEGORI PROGRESS -->
+  <div class="cat-box">
+    <p class="cat-box__title">▶ カテゴリー別進捗</p>
+    <div id="cat-progress-list"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav__item active" onclick="playClick()">ホーム</button>
+    <button class="bottom-nav__item" onclick="navigate('study.html')">学習</button>
+    <button class="bottom-nav__item" onclick="navigate('manual.html')">マニュアル</button>
+  </nav>
+
+  <script src="data/vocabulary.js"></script>
+  <script src="app.js"></script>
+  <script>
+    initAudio();
+    initBGM();
+
+    document.getElementById('press-start').addEventListener('click', function() {
+      playClick();
+      playBGM();
+      this.style.transition = 'opacity 0.4s';
+      this.style.opacity = '0';
+      setTimeout(() => this.remove(), 400);
+    });
+
+    function goStudy() {
+      stopBGM();
+      navigate('study.html');
+    }
+
+    function renderDashboard() {
+      const stats    = loadStats();
+      const learned  = getTotalLearned();
+      const due      = getTodayDueCount();
+      const mastered = getTotalMastered();
+      const learning = learned - mastered;
+      const newLeft  = 267 - learned;
+
+      document.getElementById('stat-learned').textContent  = learned;
+      document.getElementById('stat-due').textContent      = due;
+      document.getElementById('stat-streak').textContent   = stats.streak;
+      document.getElementById('stat-mastered').textContent = mastered;
+
+      const pct = Math.round((learned / 267) * 100);
+      document.getElementById('progress-bar').style.width    = pct + '%';
+      document.getElementById('progress-text').textContent   = learned;
+      document.getElementById('legend-learning').textContent = learning;
+      document.getElementById('legend-mastered').textContent = mastered;
+      document.getElementById('legend-new').textContent      = newLeft;
+
+      // Per-kategori
+      const list = document.getElementById('cat-progress-list');
+      list.innerHTML = '';
+      Object.entries(KATEGORI_INFO).forEach(([key, info]) => {
+        const p    = getKategoriProgress(key);
+        const tot  = info.total;
+        const seen = p.learningCount + p.masteredCount;
+        const pct  = tot > 0 ? Math.round((seen / tot) * 100) : 0;
+        const due  = getDueCards(key).length;
+        const barColor = pct === 100 ? 'var(--accent-green)' : 'var(--accent-cyan)';
+
+        const row = document.createElement('div');
+        row.className = 'cat-row';
+        row.innerHTML = `
+          <div class="cat-row__header">
+            <div>
+              <span class="cat-row__name">${info.label}</span>
+              <span style="display:block;font-family:'Noto Sans JP','Yu Gothic',sans-serif;font-size:10px;color:var(--accent-cyan);margin-top:2px;">${info.labelJP}</span>
+            </div>
+            <span class="cat-row__count">
+              ${seen}/${tot}
+              ${due > 0 ? `<span class="cat-row__due">復習${due}</span>` : ''}
+            </span>
+          </div>
+          <div class="progress-wrap" style="height:5px;">
+            <div class="progress-bar" style="width:${pct}%;background:${barColor};"></div>
+          </div>`;
+        list.appendChild(row);
+      });
+    }
+
+    window.addEventListener('pageshow', renderDashboard);
+    renderDashboard();
+  </script>
+</body>
+</html>
